@@ -1,0 +1,39 @@
+Używać C++
+
+
+1. Wrzucenie do bizona gramatyki
+2. Przygotowanie flexa i tokenów
+
+od program ->
+uważać na znaki
+
+pogrubione - tokeny
+
+wykrywać łańcuchy we flexie, reszta kropką
+
+mulop -> id + wartość to rozróżnienie (enumem)
+
+wyrażenia regularne zdefiniowane w zadaniu
+
+
+pełna gramatyka
+
+funkcja do listowania tablicy symboli
+
+operacje + ify + int/float
+bez funkcji, bez pętli, bez floatów może być
+może nie być floatów
+
+przy każdej operacji trzeba sprawdzać typ argumentów
+
+argumenty - wskaźniki do tablicy symboli
+po referencji
+
+zmienna tyczasowa przekonwertowana
+
+ify na podstawie etykiet
+
+
+wyciągnąć 
+
+mnemonik .typ_danych m_docel arg1 arg2
