@@ -1,41 +1,72 @@
 /**
  * Flex input program.
- *
- * Run with:
 
- * flex -o lexer.c lexer.l
- * gcc lexer. -lfl
- * a.out < lexel.l
- *
  * Author: Filip Grznkowski
  */
 
 %{
-    #include "global.h"
-    #include <stdlib.h>
+    #include <cstdlib>
+    #include <iostream>
+    #include "global.hpp"
+    #include "otherdef.hpp"
     int lineno = 1;
-    int tokenval = -1;
 %}
 
-W [ \t]
-D [0-9]
-C [A-Za-z]
-A [0-9A-Za-z]
+delimiter [ \t\n]
+whitespace {delimiter}+
+letter [A-Za-z]
+digit [0-9]
+id {letter}({letter}|{digit})*
+number {digit}+(\.{digit}+)?(E[+\-]?(digit)+)?
+comment \{.*\}
 
 %%
-{W} {/*No action*/}
-"\n" {lineno++;}
-{D}+ {yylval = atoi(yytext); return NUM;}
-{C}{A}* {
-    int p = 0;
-    p = lookup(yytext); 
-    if (p == 0) {
-        p = insert (yytext, ID);
-    }
-    yylval = p;
-    return symtable[p].token;
-}
-<<EOF>> {return DONE;}
-. {yylval=NONE; return *yytext;}
+{whitespace} {/*nothing*/}
+{comment} {std::cout << "Comment";}
+
+program {return (PROGRAM);}
+"var" {return (VAR);}
+array {return (ARRAY);}
+
+integer {return (INTEGER);}
+real {return (REAL);}
+
+function {return (FUNCTION);}
+procedure {return (PROCEDURE);}
+
+begin {return (BEGINN);}
+end {return (END);}
+
+":=" {return (ASSIGNOP);}
+
+if {return (IF);}
+then {return (THEN);}
+else {return (ELSE);}
+while {return (WHILE);}
+do {return (DO);}
+
+"=" {yylval = EQUAL; return (RELOP);}
+"<>" {yylval = NOT_EQUAL; return (RELOP);}
+"<" {yylval = LESS_THAN; return (RELOP);}
+"<=" {yylval = LESS_EQUAL; return (RELOP);}
+">" {yylval = GREATER_THAN; return (RELOP);}
+">=" {yylval = GREATER_EQUAL; return (RELOP);}
+
+"+" {yylval = PLUS; return (SIGN);}
+"-" {yylval = MINUS; return (SIGN);}
+
+"or" {return (OR);}
+
+"*" {yylval = MULTIPLICATION; return (MULOP);}
+"/" {yylval = DIVISION; return (MULOP);}
+"div" {yylval = DIV; return (MULOP);}
+"mod" {yylval = MOD; return (MULOP);}
+"and" {yylval = AND; return (MULOP);}
+"not" {return (NOT);}
+
+{number} {yylval = atoi(yytext); return (NUM);}
+{id} {yylval = 's'; return (ID);}
+
+. {yylval=0; return *yytext;}
 
 %%

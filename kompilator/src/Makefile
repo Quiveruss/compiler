@@ -5,21 +5,39 @@
 CC=g++
 CFLAGS=-Wall -O2
 
-objects = main.o parser.o
+# Objects
+objects = main.o parser.o lexer.o
 
+# Main program
 compiler: $(objects)
 		    $(CC) -o compiler $(objects) -lfl
 
-main.o: main.cpp global.h
+main.o: main.cpp global.hpp
 		$(CC) -c $<
 
-global.h: parser.h
+# Global declarations
+global.hpp: parser.hpp otherdef.hpp
 
-parser.c parser.h: parser.y
-		bison -d -o parser.c $<
+# Lexer declarations
+lexer.cpp: lexer.l
+		flex -o lexer.cpp $<
+
+lexer.o: lexer.cpp global.hpp
+		$(CC) -c $<
+
+# Parser declarations
+
+parser.cpp parser.hpp: parser.y
+		bison -d -o parser.cpp $<
+
+parser.o: parser.cpp global.hpp
+		$(CC) -c $<
+
+
+
+# Rest
 
 .PHONY : clean
 
 clean :
-		    -rm -f compiler parser.c parser.h $(objects) 
-			
+		    -rm -f compiler parser.cpp parser.hpp lexer.cpp $(objects) 

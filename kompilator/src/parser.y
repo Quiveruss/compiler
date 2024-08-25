@@ -2,13 +2,17 @@
  * Input file for bison.
  *
  * Author: Filip Grzankowski
- *
- * Compile with:
- * bison -d -o parser.c parser.y
  */
 
 %{
-// Input some code lol
+#include <string>
+#include <iostream>
+#include "global.hpp"
+#include "otherdef.hpp"
+
+void yyerror(std::string s) {
+    std::cout << s << "\n";
+}
 %}
 
 %token PROGRAM
@@ -19,7 +23,7 @@
 %token FUNCTION
 %token PROCEDURE
 %token ASSIGNOP
-%token BEGIN
+%token BEGINN
 %token DO
 %token ELSE
 %token END
@@ -28,6 +32,7 @@
 %token NOT
 %token NUM
 %token OF
+%token RELOP
 %token OR
 %token SIGN
 %token THEN
@@ -40,6 +45,7 @@ program : PROGRAM ID '(' identifier_list ')' ';'
         declarations
         subprogram_declarations
         compound_statement
+        '.'
 ;
 
 identifier_list : ID
@@ -77,8 +83,8 @@ parameter_list : identifier_list ':' type
                | parameter_list ';' identifier_list ':' type
 ;
 
-compound_statement : BEGIN
-                   optional_statements
+compound_statement : BEGINN 
+                   optional_statements 
                    END
 ;
 
@@ -110,7 +116,8 @@ expression_list : expression
 ;
 
 expression : simple_expression
-           | expression_list ',' expression
+           | simple_expression RELOP simple_expression
+;
 
 simple_expression : term
                   | SIGN term
@@ -122,7 +129,7 @@ term : factor
      | term MULOP factor
 ;
 
-factor : VARIABLE
+factor : variable
        | ID '(' expression_list ')'
        | NUM
        | '(' expression ')'
@@ -130,6 +137,3 @@ factor : VARIABLE
 ;
 
 %%
-void parse() {
-    yyparse();
-}
