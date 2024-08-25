@@ -9,10 +9,11 @@
     #include <iostream>
     #include "global.hpp"
     #include "otherdef.hpp"
+
     int lineno = 1;
 %}
 
-delimiter [ \t\n]
+delimiter [ \t]
 whitespace {delimiter}+
 letter [A-Za-z]
 digit [0-9]
@@ -21,6 +22,7 @@ number {digit}+(\.{digit}+)?(E[+\-]?(digit)+)?
 comment \{.*\}
 
 %%
+"\n" {++lineno;}
 {whitespace} {/*nothing*/}
 {comment} {std::cout << "Comment";}
 

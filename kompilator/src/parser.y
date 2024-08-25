@@ -10,9 +10,10 @@
 #include "global.hpp"
 #include "otherdef.hpp"
 
-void yyerror(std::string s) {
-    std::cout << s << "\n";
-}
+bool parse_error = false;
+
+void yyerror(std::string s);
+
 %}
 
 %token PROGRAM
@@ -137,3 +138,8 @@ factor : variable
 ;
 
 %%
+
+void yyerror(std::string s) {
+    parse_error = true;
+    std::cout << "Error: " << s << " at line: " << lineno << "\n";
+}
