@@ -18,6 +18,11 @@ main.o: main.cpp global.hpp
 # Global declarations
 global.hpp: parser.hpp otherdef.hpp
 
+# Symbolic table declarations
+
+symtable.o: symtable.hpp symtable.cpp
+		$(CC) -c $<
+
 # Lexer declarations
 lexer.cpp: lexer.l
 		flex -o lexer.cpp $<

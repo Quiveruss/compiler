@@ -13,6 +13,7 @@
 
 extern int lineno;
 extern bool parse_error;
+extern std::string result_code;
 
 int yylex();
 

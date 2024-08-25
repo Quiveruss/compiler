@@ -13,7 +13,6 @@
 bool parse_error = false;
 
 void yyerror(std::string s);
-
 %}
 
 %token PROGRAM
@@ -46,7 +45,7 @@ program : PROGRAM ID '(' identifier_list ')' ';'
         declarations
         subprogram_declarations
         compound_statement
-        '.'
+        '.' {result_code.append("        exit                            ;exit\n");}
 ;
 
 identifier_list : ID

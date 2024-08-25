@@ -6,16 +6,20 @@
 
 #include "global.hpp"
 #include <iostream>
+#include <fstream>
 using namespace std;
 
-int main() {
+static int BUFFER_SIZE = 20;
+string result_code = "";
+
+void start(void) {
     std::cout << "===========\n\n";
     std::cout << "Filip's Compiler!\n";
     std::cout << "Provide input:\n\n";
     std::cout << "===========\n\n";
+}
 
-    yyparse();
-
+void end(void) {
     std::cout << "\n\n==========\n\n";
     std::cout << "Finished!\n";
     
@@ -24,8 +28,27 @@ int main() {
     }
     else {
         std::cout << "Compilation successful!\n";
+        std::cout << "Output program:\n";
+        std::cout << "\n==========\n\n";
+
+        std::cout << result_code;
     }
     std::cout << "\n==========\n";
+}
+
+void init (void) {
+    result_code.append("        jump.i  #lab0                   ;jump.i  lab0\n");
+    result_code.append("lab0:\n");
+    std::cout << result_code;
+}
+
+int main() {
+    init();
+    start();
+
+    yyparse();
+
+    end();
 
     return 0;
 } 
