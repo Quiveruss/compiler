@@ -18,6 +18,11 @@ extern std::string result_code;
 
 extern Symtable symtable;
 
+union numbers {
+    int integer;
+    float floating;
+};
+
 enum TOKEN_TYPE {
     TOKEN_INTEGER,
     TOKEN_REAL,

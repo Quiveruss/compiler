@@ -56,27 +56,29 @@ do {return (DO);}
 
 ".." {return (DOUBLEDOT);}
 
-"=" {yylval = EQUAL; return (RELOP);}
-"<>" {yylval = NOT_EQUAL; return (RELOP);}
-"<" {yylval = LESS_THAN; return (RELOP);}
-"<=" {yylval = LESS_EQUAL; return (RELOP);}
-">" {yylval = GREATER_THAN; return (RELOP);}
-">=" {yylval = GREATER_EQUAL; return (RELOP);}
+"=" {yylval.RELOP = EQUAL; return (RELOP);}
+"<>" {yylval.RELOP = NOT_EQUAL; return (RELOP);}
+"<" {yylval.RELOP = LESS_THAN; return (RELOP);}
+"<=" {yylval.RELOP = LESS_EQUAL; return (RELOP);}
+">" {yylval.RELOP = GREATER_THAN; return (RELOP);}
+">=" {yylval.RELOP = GREATER_EQUAL; return (RELOP);}
 
-"+" {yylval = PLUS; return (SIGN);}
-"-" {yylval = MINUS; return (SIGN);}
+"+" {yylval.SIGN = PLUS; return (SIGN);}
+"-" {yylval.SIGN = MINUS; return (SIGN);}
 
 "or" {return (OR);}
 
-"*" {yylval = MULTIPLICATION; return (MULOP);}
-"/" {yylval = DIVISION; return (MULOP);}
-"div" {yylval = DIV; return (MULOP);}
-"mod" {yylval = MOD; return (MULOP);}
-"and" {yylval = AND; return (MULOP);}
+"*" {yylval.MULOP = MULTIPLICATION; return (MULOP);}
+"/" {yylval.MULOP = DIVISION; return (MULOP);}
+"div" {yylval.MULOP = DIV; return (MULOP);}
+"mod" {yylval.MULOP = MOD; return (MULOP);}
+"and" {yylval.MULOP = AND; return (MULOP);}
 "not" {return (NOT);}
 
-{number} {number_integer = atoi(yytext); return (NUM);}
-{id} {id_string = yytext; return (ID);}
+{number} {yylval.NUM = yytext; return (NUM);}
+{id} {
+    yylval.ID = yytext; return (ID);
+     }
 
 . {return *yytext;}
 

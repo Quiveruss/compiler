@@ -921,42 +921,42 @@ YY_RULE_SETUP
 case 21:
 YY_RULE_SETUP
 #line 59 "lexer.l"
-{yylval = EQUAL; return (RELOP);}
+{yylval.RELOP = EQUAL; return (RELOP);}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 60 "lexer.l"
-{yylval = NOT_EQUAL; return (RELOP);}
+{yylval.RELOP = NOT_EQUAL; return (RELOP);}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 61 "lexer.l"
-{yylval = LESS_THAN; return (RELOP);}
+{yylval.RELOP = LESS_THAN; return (RELOP);}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 62 "lexer.l"
-{yylval = LESS_EQUAL; return (RELOP);}
+{yylval.RELOP = LESS_EQUAL; return (RELOP);}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 63 "lexer.l"
-{yylval = GREATER_THAN; return (RELOP);}
+{yylval.RELOP = GREATER_THAN; return (RELOP);}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 64 "lexer.l"
-{yylval = GREATER_EQUAL; return (RELOP);}
+{yylval.RELOP = GREATER_EQUAL; return (RELOP);}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
 #line 66 "lexer.l"
-{yylval = PLUS; return (SIGN);}
+{yylval.SIGN = PLUS; return (SIGN);}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
 #line 67 "lexer.l"
-{yylval = MINUS; return (SIGN);}
+{yylval.SIGN = MINUS; return (SIGN);}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
@@ -966,27 +966,27 @@ YY_RULE_SETUP
 case 30:
 YY_RULE_SETUP
 #line 71 "lexer.l"
-{yylval = MULTIPLICATION; return (MULOP);}
+{yylval.MULOP = MULTIPLICATION; return (MULOP);}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 72 "lexer.l"
-{yylval = DIVISION; return (MULOP);}
+{yylval.MULOP = DIVISION; return (MULOP);}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
 #line 73 "lexer.l"
-{yylval = DIV; return (MULOP);}
+{yylval.MULOP = DIV; return (MULOP);}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
 #line 74 "lexer.l"
-{yylval = MOD; return (MULOP);}
+{yylval.MULOP = MOD; return (MULOP);}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
 #line 75 "lexer.l"
-{yylval = AND; return (MULOP);}
+{yylval.MULOP = AND; return (MULOP);}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
@@ -996,24 +996,26 @@ YY_RULE_SETUP
 case 36:
 YY_RULE_SETUP
 #line 78 "lexer.l"
-{number_integer = atoi(yytext); return (NUM);}
+{yylval.NUM = yytext; return (NUM);}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
 #line 79 "lexer.l"
-{id_string = yytext; return (ID);}
+{
+    yylval.ID = yytext; return (ID);
+     }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 81 "lexer.l"
+#line 83 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 83 "lexer.l"
+#line 85 "lexer.l"
 ECHO;
 	YY_BREAK
-#line 1017 "lexer.cpp"
+#line 1019 "lexer.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2014,7 +2016,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 83 "lexer.l"
+#line 85 "lexer.l"
 
 
 

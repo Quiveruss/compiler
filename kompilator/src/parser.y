@@ -13,14 +13,19 @@
 bool parse_error = false;
 
 void yyerror(std::string s);
+
+std::vector<std::string> identifierList;
+int currentIds = 0;
+std::vector<std::string> parameterList;
 %}
 
+%define api.value.type union
 %token PROGRAM
-%token ID
+%token <const char *> ID
 %token ARRAY
 %token DOUBLEDOT
-%token INTEGER
-%token REAL
+%token <int> INTEGER
+%token <int> REAL
 %token FUNCTION
 %token PROCEDURE
 %token ASSIGNOP
@@ -29,40 +34,64 @@ void yyerror(std::string s);
 %token ELSE
 %token END
 %token IF
-%token MULOP
+%token <int> MULOP
 %token NOT
-%token NUM
+%token <const char *> NUM
 %token OF
-%token RELOP
+%token <int> RELOP
 %token OR
-%token SIGN
+%token <int> SIGN
 %token THEN
 %token VAR
 %token VARIABLE
 %token WHILE
 
 %%
-program : PROGRAM ID '(' identifier_list ')' ';'
+program : PROGRAM ID '(' identifier_list ')' ';' {
+        identifierList.clear();
+        }
+
         declarations
+
         subprogram_declarations
+
         compound_statement
-        '.' {result_code.append("        exit                            ;exit\n");}
+
+        '.' 
+        
+        {
+        result_code.append("        exit                            ;exit\n");
+        }
 ;
 
-identifier_list : ID
-                | identifier_list ',' ID
+identifier_list : ID {identifierList.push_back($1);}
+                | identifier_list ',' ID {identifierList.push_back($3);}
 ;
 
-declarations : declarations VAR identifier_list ':' type ';'
+declarations : declarations VAR identifier_list ':' type ';' {
+             enum VARIABLE_TYPE varType;
+
+             if ($<int>5 == INTEGER) {
+                varType = VARIABLE_INTEGER;
+             } else {
+                varType = VARIABLE_REAL;
+             } 
+
+             for (auto & id : identifierList) {
+                symtable.addEntry(id, ENTRY_VARIABLE, varType);
+             }
+
+             identifierList.clear();
+             }
              |
 ;
 
-type : standard_type
+type : standard_type {$<int>$ = $<int>1;}
      | ARRAY '[' NUM DOUBLEDOT NUM ']' OF standard_type
 ;
 
-standard_type : INTEGER
-              | REAL
+standard_type : INTEGER {$<int>$ = INTEGER;}
+              | REAL {$<int>$ = REAL;}
 ;
 
 subprogram_declarations : subprogram_declarations subprogram_declaration ';'
@@ -110,7 +139,7 @@ variable : ID
 
 procedure_statement : ID
                     | ID '(' expression_list ')'
-                    { result_code.append("\nNew id: " + id_string + "\n");
+                    { //result_code.append("\nNew id: " + std::string($1) + "\n");
                     }
 ;
 

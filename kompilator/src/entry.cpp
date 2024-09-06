@@ -28,13 +28,44 @@ std::string Entry::toString() {
         
         switch(this->entryType) {
             case ENTRY_VARIABLE:
-                stringEntry.append("variable");
+                stringEntry.append("variable ");
+                stringEntry.append(identifier + " ");
+
+                switch (variableType) {
+                    case VARIABLE_INTEGER:
+                        stringEntry.append("integer ");
+
+                        break;
+                    case VARIABLE_REAL:
+                        stringEntry.append("real ");
+
+                        break;
+                    case VARIABLE_ARRAY_INTEGER:
+                        stringEntry.append("array integer ");
+
+                        break;
+                    case VARIABLE_ARRAY_REAL:
+                        stringEntry.append("array real ");
+
+                        break;
+                    default:
+                        stringEntry.append("none ");
+
+                        break;
+                }
+
+                stringEntry.append("offset=" + std::to_string(this->memoryIndex));
+
                 break;
             case ENTRY_FUNCTION:
                 stringEntry.append("function");
+
+
                 break;
             case ENTRY_PROCEDURE:
                 stringEntry.append("procedure");
+
+
                 break;
             default:
                 stringEntry.append("none");
@@ -43,12 +74,6 @@ std::string Entry::toString() {
 
         stringEntry.append(this->identifier);
         stringEntry.append(" ");
-
-        if (entryType == ENTRY_VARIABLE) {
-            stringEntry.append(std::to_string(this->memoryIndex));
-        } else {
-            stringEntry.append("-");
-        }
 
         return stringEntry;
 }
