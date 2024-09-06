@@ -18,6 +18,7 @@ void yyerror(std::string s);
 %token PROGRAM
 %token ID
 %token ARRAY
+%token DOUBLEDOT
 %token INTEGER
 %token REAL
 %token FUNCTION
@@ -57,7 +58,7 @@ declarations : declarations VAR identifier_list ':' type ';'
 ;
 
 type : standard_type
-     | ARRAY '[' NUM '.' '.' NUM ']' OF standard_type
+     | ARRAY '[' NUM DOUBLEDOT NUM ']' OF standard_type
 ;
 
 standard_type : INTEGER
@@ -109,6 +110,8 @@ variable : ID
 
 procedure_statement : ID
                     | ID '(' expression_list ')'
+                    { result_code.append("\nNew id: " + id_string + "\n");
+                    }
 ;
 
 expression_list : expression

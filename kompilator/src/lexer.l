@@ -11,6 +11,12 @@
     #include "otherdef.hpp"
 
     int lineno = 1;
+
+    Symtable symtable = Symtable(); 
+    
+    int number_integer;
+    float number_real;
+    std::string id_string;
 %}
 
 delimiter [ \t]
@@ -28,7 +34,8 @@ comment \{.*\}
 
 program {return (PROGRAM);}
 "var" {return (VAR);}
-array {return (ARRAY);}
+"array" {return (ARRAY);}
+"of" {return (OF);}
 
 integer {return (INTEGER);}
 real {return (REAL);}
@@ -46,6 +53,8 @@ then {return (THEN);}
 else {return (ELSE);}
 while {return (WHILE);}
 do {return (DO);}
+
+".." {return (DOUBLEDOT);}
 
 "=" {yylval = EQUAL; return (RELOP);}
 "<>" {yylval = NOT_EQUAL; return (RELOP);}
@@ -66,9 +75,9 @@ do {return (DO);}
 "and" {yylval = AND; return (MULOP);}
 "not" {return (NOT);}
 
-{number} {yylval = atoi(yytext); return (NUM);}
-{id} {yylval = 's'; return (ID);}
+{number} {number_integer = atoi(yytext); return (NUM);}
+{id} {id_string = yytext; return (ID);}
 
-. {yylval=0; return *yytext;}
+. {return *yytext;}
 
 %%

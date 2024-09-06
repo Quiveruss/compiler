@@ -10,10 +10,23 @@
 #include <string>
 #include "parser.hpp"
 #include "otherdef.hpp"
+#include "symtable.hpp"
 
 extern int lineno;
 extern bool parse_error;
 extern std::string result_code;
+
+extern Symtable symtable;
+
+enum TOKEN_TYPE {
+    TOKEN_INTEGER,
+    TOKEN_REAL,
+    TOKEN_STRING
+};
+
+extern int number_integer;
+extern float number_real;
+extern std::string id_string;
 
 int yylex();
 

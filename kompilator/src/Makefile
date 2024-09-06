@@ -3,25 +3,29 @@
 ## Author: Filip Grzankowski
 
 CC=g++
-CFLAGS=-Wall -O2
+CFLAGS=-Wall -Werror -Wextra
 
 # Objects
-objects = main.o parser.o lexer.o
+objects = main.o parser.o lexer.o symtable.o entry.o
 
 # Main program
 compiler: $(objects)
-		    $(CC) -o compiler $(objects) -lfl
+		    $(CC) $(CFLAGS) -o compiler $(objects) -lfl
 
 main.o: main.cpp global.hpp
 		$(CC) -c $<
 
 # Global declarations
-global.hpp: parser.hpp otherdef.hpp
+global.hpp: parser.hpp otherdef.hpp symtable.hpp
+symtable.hpp: entry.hpp
 
 # Symbolic table declarations
-
-symtable.o: symtable.hpp symtable.cpp
+symtable.o: symtable.cpp symtable.hpp
 		$(CC) -c $<
+
+# Entry declarations
+entry.o: entry.cpp entry.hpp
+		$(CC) $(CFLAGS) -c $<
 
 # Lexer declarations
 lexer.cpp: lexer.l
@@ -37,7 +41,6 @@ parser.cpp parser.hpp: parser.y
 
 parser.o: parser.cpp global.hpp
 		$(CC) -c $<
-
 
 
 # Rest
