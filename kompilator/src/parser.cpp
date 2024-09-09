@@ -479,14 +479,14 @@ static const yytype_uint8 yytranslate[] =
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_uint8 yyrline[] =
+static const yytype_uint16 yyrline[] =
 {
        0,    54,    54,    54,    71,    72,    75,    90,    93,    94,
       97,    98,   101,   102,   105,   108,   109,   112,   113,   116,
-     117,   120,   125,   126,   129,   130,   133,   134,   135,   136,
-     137,   140,   144,   147,   151,   150,   197,   201,   207,   211,
-     217,   218,   219,   220,   223,   227,   230,   234,   235,   236,
-     237
+     117,   120,   125,   126,   129,   130,   133,   158,   159,   160,
+     161,   164,   168,   171,   175,   174,   221,   225,   231,   235,
+     241,   242,   243,   244,   247,   251,   255,   259,   260,   264,
+     265
 };
 #endif
 
@@ -1397,32 +1397,62 @@ yyreduce:
 #line 1398 "parser.cpp" /* yacc.c:1646  */
     break;
 
+  case 26:
+#line 133 "parser.y" /* yacc.c:1646  */
+    {
+          std::string var = std::string((*(const char **)(&yyvsp[-2])));
+          std::cout << "variable: " + var + "\n";
+
+
+          std::string expr = std::string((*(const char **)(&yyvsp[0])));
+          if (isdigit(expr[0])) {
+            if (expr.find('.') != std::string::npos || 
+                expr.find("E") != std::string::npos) {
+                float val_float = std::stof(expr); 
+            } else {
+                int val_int = stoi(expr);
+            }
+          } else {
+            std::cout << "id\n";  
+            int symtableIndex = symtable.findEntryId(expr);
+             
+            if (symtableIndex < 0) {
+                compilation_status = ERROR_UNRECOGNIZED_VARIABLE;
+                compilationErrors.push_back(std::make_pair("unrecognized variable", lineno));
+            } else {
+                
+            }
+          }
+          }
+#line 1428 "parser.cpp" /* yacc.c:1646  */
+    break;
+
   case 31:
-#line 141 "parser.y" /* yacc.c:1646  */
+#line 165 "parser.y" /* yacc.c:1646  */
     {
          (*(const char **)(&yyval)) = (*(const char **)(&yyvsp[0]));
          }
-#line 1406 "parser.cpp" /* yacc.c:1646  */
+#line 1436 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 147 "parser.y" /* yacc.c:1646  */
+#line 171 "parser.y" /* yacc.c:1646  */
     {
                     //std::cout << "Test " + std::string($1);
                     }
-#line 1414 "parser.cpp" /* yacc.c:1646  */
+#line 1444 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 151 "parser.y" /* yacc.c:1646  */
+#line 175 "parser.y" /* yacc.c:1646  */
     { 
                     procedure_name = std::string((*(const char **)(&yyvsp[0])));
                     }
-#line 1422 "parser.cpp" /* yacc.c:1646  */
+#line 1452 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 154 "parser.y" /* yacc.c:1646  */
+#line 178 "parser.y" /* yacc.c:1646  */
     {
                     if (procedure_name == "read" || procedure_name == "write") {
                         for (auto & param : parameterList) {
@@ -1463,59 +1493,74 @@ yyreduce:
 
                     parameterList.clear();
                     }
-#line 1467 "parser.cpp" /* yacc.c:1646  */
+#line 1497 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 198 "parser.y" /* yacc.c:1646  */
+#line 222 "parser.y" /* yacc.c:1646  */
     {
                 parameterList.push_back((*(const char **)(&yyvsp[0])));
                 }
-#line 1475 "parser.cpp" /* yacc.c:1646  */
+#line 1505 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 202 "parser.y" /* yacc.c:1646  */
+#line 226 "parser.y" /* yacc.c:1646  */
     {
                 parameterList.push_back((*(const char **)(&yyvsp[0])));
                 }
-#line 1483 "parser.cpp" /* yacc.c:1646  */
+#line 1513 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 208 "parser.y" /* yacc.c:1646  */
+#line 232 "parser.y" /* yacc.c:1646  */
     {
            (*(const char **)(&yyval)) = (*(const char **)(&yyvsp[0]));
            }
-#line 1491 "parser.cpp" /* yacc.c:1646  */
+#line 1521 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 212 "parser.y" /* yacc.c:1646  */
+#line 236 "parser.y" /* yacc.c:1646  */
     {
            // nothing for now
            }
-#line 1499 "parser.cpp" /* yacc.c:1646  */
+#line 1529 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 224 "parser.y" /* yacc.c:1646  */
+#line 248 "parser.y" /* yacc.c:1646  */
     {
      (*(const char **)(&yyval)) = (*(const char **)(&yyvsp[0]));
      }
-#line 1507 "parser.cpp" /* yacc.c:1646  */
+#line 1537 "parser.cpp" /* yacc.c:1646  */
+    break;
+
+  case 45:
+#line 251 "parser.y" /* yacc.c:1646  */
+    {
+     }
+#line 1544 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 231 "parser.y" /* yacc.c:1646  */
+#line 256 "parser.y" /* yacc.c:1646  */
     {
        (*(const char **)(&yyval)) = (*(const char **)(&yyvsp[0]));
        }
-#line 1515 "parser.cpp" /* yacc.c:1646  */
+#line 1552 "parser.cpp" /* yacc.c:1646  */
+    break;
+
+  case 48:
+#line 261 "parser.y" /* yacc.c:1646  */
+    {
+       (*(const char **)(&yyval)) = (*(const char **)(&yyvsp[0]));
+       }
+#line 1560 "parser.cpp" /* yacc.c:1646  */
     break;
 
 
-#line 1519 "parser.cpp" /* yacc.c:1646  */
+#line 1564 "parser.cpp" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1743,7 +1788,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 240 "parser.y" /* yacc.c:1906  */
+#line 268 "parser.y" /* yacc.c:1906  */
 
 
 void yyerror(std::string s) {

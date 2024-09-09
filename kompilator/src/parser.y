@@ -130,7 +130,47 @@ statement_list : statement
                | statement_list ';' statement
 ;
 
-statement : variable ASSIGNOP expression
+statement : variable ASSIGNOP expression {
+          std::string var = std::string($<const char *>1);
+          std::cout << "variable: " + var + "\n";
+
+          int varSymtableIndex = symtable.findEntryId(expr);
+             
+          if (varSymtableIndex < 0) {
+              compilation_status = ERROR_UNRECOGNIZED_VARIABLE;
+              compilationErrors.push_back(std::make_pair("unrecognized variable", lineno));
+          } else {
+              std::string expr = std::string($<const char *>3);
+              // todo:
+              // - var int val int
+              // - var int val real
+              // - var real val real
+              // - var real val int
+              // - var int id int
+              // - var int id real
+              // - var real id real
+              // - var real id int
+
+              if (isdigit(expr[0])) {
+                if (expr.find('.') != std::string::npos || 
+                    expr.find("E") != std::string::npos) {
+                    float val_float = std::stof(expr); 
+                } else {
+                    int val_int = stoi(expr);
+                }
+              } else {
+                std::cout << "id\n";  
+                int symtableIndex = symtable.findEntryId(expr);
+                 
+                if (symtableIndex < 0) {
+                    compilation_status = ERROR_UNRECOGNIZED_VARIABLE;
+                    compilationErrors.push_back(std::make_pair("unrecognized variable", lineno));
+                } else {
+                    
+                }
+              }
+          }
+          }
           | procedure_statement
           | compound_statement
           | IF expression THEN statement ELSE statement
@@ -224,7 +264,8 @@ term : factor
      {
      $<const char *>$ = $<const char *>1;
      }
-     | term MULOP factor
+     | term MULOP factor {
+     }
 ;
 
 factor : variable
@@ -233,6 +274,9 @@ factor : variable
        }
        | ID '(' expression_list ')'
        | NUM
+       {
+       $<const char *>$ = $<const char *>1;
+       }
        | '(' expression ')'
        | NOT factor
 ;
