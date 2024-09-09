@@ -15,6 +15,8 @@
 extern int lineno;
 extern bool parse_error;
 extern std::string result_code;
+extern enum COMPILATION_STATUS compilationStatus;
+extern std::vector<std::pair<std::string, int>> compilationErrors;
 
 extern Symtable symtable;
 

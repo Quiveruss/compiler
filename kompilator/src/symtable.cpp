@@ -59,5 +59,18 @@ int Symtable::addEntry(std::string id, ENTRY_TYPE entryType, VARIABLE_TYPE varia
 
     return entries.size()-1;
 }
+    
+int Symtable::findEntryId(std::string str) {
+    int i = 0;
+
+    for (auto & entry : entries) {
+        if (entry.getIdentifier() == str) {
+            return i;
+        }
+        ++i;
+    }
+
+    return -1;
+}
 
 #endif /* SYMTABLE_CPP */

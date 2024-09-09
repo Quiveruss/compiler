@@ -7,6 +7,7 @@
 %{
 #include <string>
 #include <iostream>
+#include <utility>
 #include "global.hpp"
 #include "otherdef.hpp"
 
@@ -14,9 +15,12 @@ bool parse_error = false;
 
 void yyerror(std::string s);
 
+enum COMPILATION_STATUS compilation_status = COMPILATION_SUCCESS;
 std::vector<std::string> identifierList;
 int currentIds = 0;
 std::vector<std::string> parameterList;
+std::string procedure_name;
+std::vector<std::pair<std::string, int>> compilationErrors;
 %}
 
 %define api.value.type union
@@ -60,7 +64,7 @@ program : PROGRAM ID '(' identifier_list ')' ';' {
         '.' 
         
         {
-        result_code.append("        exit                            ;exit\n");
+        result_code.append("        exit    ;exit\n");
         }
 ;
 
@@ -134,34 +138,99 @@ statement : variable ASSIGNOP expression
 ;
 
 variable : ID
+         {
+         $<const char *>$ = $1;
+         }
          | ID '[' expression ']'
 ;
 
-procedure_statement : ID
-                    | ID '(' expression_list ')'
-                    { //result_code.append("\nNew id: " + std::string($1) + "\n");
+procedure_statement : ID {
+                    //std::cout << "Test " + std::string($1);
                     }
+                    | ID                     
+                    { 
+                    procedure_name = std::string($1);
+                    } '(' expression_list ')' 
+                    {
+                    if (procedure_name == "read" || procedure_name == "write") {
+                        for (auto & param : parameterList) {
+                            int symtableIndex = symtable.findEntryId(param);
+                             
+                            if (symtableIndex >= 0) {
+                                Entry entry = symtable.entries[symtableIndex];
+                                std::string strVarType;
+                                 
+                                if (entry.variableType == VARIABLE_INTEGER) {
+                                    strVarType = "i";
+                                } else if (entry.variableType == VARIABLE_REAL) {
+                                    strVarType = "r";
+                                }
+                                 
+                                if (procedure_name == "read") {
+                                } else if (procedure_name == "write") {
+                                }
+
+                                result_code.append("        ");
+                                result_code.append(procedure_name);
+                                result_code.append(".");
+                                result_code.append(strVarType);
+                                result_code.append("    " +std::to_string(entry.memoryIndex));
+                                result_code.append("    ;read.");
+                                result_code.append(strVarType);
+                                result_code.append(" " + entry.identifier + "\n");
+                            }
+                            else {
+                                compilation_status = ERROR_UNRECOGNIZED_VARIABLE;
+                                compilationErrors.push_back(std::make_pair("unrecognized variable", lineno));
+                            }
+                        }
+                    } else {
+                        compilation_status = ERROR_UNRECOGNIZED_PROCEDURE;
+                        compilationErrors.push_back(std::make_pair("unrecognized procedure", lineno));
+                    }
+
+                    parameterList.clear();
+                    }
+
 ;
 
-expression_list : expression
+expression_list : expression 
+                {
+                parameterList.push_back($<const char *>1);
+                }
                 | expression_list ',' expression
+                {
+                parameterList.push_back($<const char *>3);
+                }
 ;
 
 expression : simple_expression
+           {
+           $<const char *>$ = $<const char *>1;
+           }
            | simple_expression RELOP simple_expression
+           {
+           // nothing for now
+           }
 ;
 
-simple_expression : term
+simple_expression : term 
                   | SIGN term
-                  | simple_expression SIGN term
-                  | simple_expression OR term
+                  | simple_expression SIGN term 
+                  | simple_expression OR term 
 ;
 
 term : factor
+     {
+     $<const char *>$ = $<const char *>1;
+     }
      | term MULOP factor
 ;
 
 factor : variable
+       {
+       $<const char *>$ = $<const char *>1;
+       }
        | ID '(' expression_list ')'
        | NUM
        | '(' expression ')'

@@ -1002,20 +1002,21 @@ case 37:
 YY_RULE_SETUP
 #line 79 "lexer.l"
 {
-    yylval.ID = yytext; return (ID);
+    id_string = std::string(yytext);
+    yylval.ID = id_string.c_str(); return (ID);
      }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 83 "lexer.l"
+#line 84 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 85 "lexer.l"
+#line 86 "lexer.l"
 ECHO;
 	YY_BREAK
-#line 1019 "lexer.cpp"
+#line 1020 "lexer.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2016,7 +2017,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 85 "lexer.l"
+#line 86 "lexer.l"
 
 
 

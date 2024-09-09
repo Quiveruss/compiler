@@ -77,7 +77,8 @@ do {return (DO);}
 
 {number} {yylval.NUM = yytext; return (NUM);}
 {id} {
-    yylval.ID = yytext; return (ID);
+    id_string = std::string(yytext);
+    yylval.ID = id_string.c_str(); return (ID);
      }
 
 . {return *yytext;}

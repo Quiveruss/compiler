@@ -25,14 +25,14 @@ enum VARIABLE_TYPE {
 };
 
 class Entry {
+    public:
     std::string identifier;
     int symtableIndex;
     enum ENTRY_TYPE entryType;
     enum VARIABLE_TYPE variableType;
     int memoryIndex;
 
-    public:
-    Entry(std::string identifier, 
+   Entry(std::string identifier, 
           int symtableIndex,
           enum ENTRY_TYPE entryType, 
           enum VARIABLE_TYPE variableType,
