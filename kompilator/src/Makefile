@@ -1,4 +1,4 @@
-#Makefile to create a simple compiler.
+# Makefile to create a simple compiler.
 #
 ## Author: Filip Grzankowski
 
@@ -36,7 +36,7 @@ lexer.o: lexer.cpp global.hpp
 
 # Parser declarations
 
-parser.cpp parser.hpp: parser.y
+parser.cpp parser.hpp: parser.y codegen.cpp
 		bison -d -o parser.cpp $<
 
 parser.o: parser.cpp global.hpp

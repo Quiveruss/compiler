@@ -10,6 +10,7 @@
 #include <utility>
 #include "global.hpp"
 #include "otherdef.hpp"
+#include "codegen.cpp"
 
 bool parse_error = false;
 
@@ -134,31 +135,47 @@ statement : variable ASSIGNOP expression {
           std::string var = std::string($<const char *>1);
           std::cout << "variable: " + var + "\n";
 
-          int varSymtableIndex = symtable.findEntryId(expr);
+          int varSymtableIndex = symtable.findEntryId(var);
              
           if (varSymtableIndex < 0) {
               compilation_status = ERROR_UNRECOGNIZED_VARIABLE;
               compilationErrors.push_back(std::make_pair("unrecognized variable", lineno));
           } else {
+              Entry varEntry = symtable.entries[varSymtableIndex];
               std::string expr = std::string($<const char *>3);
               // todo:
               // - var int val int
               // - var int val real
               // - var real val real
               // - var real val int
-              // - var int id int
-              // - var int id real
-              // - var real id real
-              // - var real id int
 
-              if (isdigit(expr[0])) {
+              if (isdigit(expr[0]) || expr[0] == '-') {
                 if (expr.find('.') != std::string::npos || 
                     expr.find("E") != std::string::npos) {
                     float val_float = std::stof(expr); 
                 } else {
                     int val_int = stoi(expr);
+                    /*
+                     result_code.append("        ");
+                     result_code.append("mov.i");
+                     result_code.append("    ");
+                     result_code.append("#" + std::to_string());
+                     result_code.append("    ;read.");
+                     result_code.append(strVarType);
+                     result_code.append(" " + entry.identifier + "\n");
+                     */
+
+                    if (varEntry.variableType == VARIABLE_INTEGER) {
+                        //result_code.append();
+                    } else {
+                    }
+
                 }
               } else {
+              // - var int id int
+              // - var int id real
+              // - var real id real
+              // - var real id int
                 std::cout << "id\n";  
                 int symtableIndex = symtable.findEntryId(expr);
                  
@@ -198,26 +215,8 @@ procedure_statement : ID {
                              
                             if (symtableIndex >= 0) {
                                 Entry entry = symtable.entries[symtableIndex];
-                                std::string strVarType;
                                  
-                                if (entry.variableType == VARIABLE_INTEGER) {
-                                    strVarType = "i";
-                                } else if (entry.variableType == VARIABLE_REAL) {
-                                    strVarType = "r";
-                                }
-                                 
-                                if (procedure_name == "read") {
-                                } else if (procedure_name == "write") {
-                                }
-
-                                result_code.append("        ");
-                                result_code.append(procedure_name);
-                                result_code.append(".");
-                                result_code.append(strVarType);
-                                result_code.append("    " +std::to_string(entry.memoryIndex));
-                                result_code.append("    ;read.");
-                                result_code.append(strVarType);
-                                result_code.append(" " + entry.identifier + "\n");
+                                codeGenProcedure(procedure_name, entry);
                             }
                             else {
                                 compilation_status = ERROR_UNRECOGNIZED_VARIABLE;
