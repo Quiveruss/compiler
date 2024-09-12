@@ -16,14 +16,13 @@ bool parse_error = false;
 void yyerror(std::string s);
 
 enum COMPILATION_STATUS compilation_status = COMPILATION_SUCCESS;
-std::vector<std::string> identifierList;
+std::vector<int> identifierList;
 int currentIds = 0;
-std::vector<std::string> parameterList;
+std::vector<int> parameterList;
 std::string procedure_name;
 std::vector<std::pair<std::string, int>> compilationErrors;
 %}
 
-%define api.value.type union
 %token PROGRAM
 %token ID
 %token ARRAY
@@ -74,15 +73,25 @@ identifier_list : ID {identifierList.push_back($1);}
 
 declarations : declarations VAR identifier_list ':' type ';' {
              enum VARIABLE_TYPE varType;
-
-             if ($<int>5 == INTEGER) {
+              
+             if ($5 == INTEGER) {
                 varType = VARIABLE_INTEGER;
              } else {
                 varType = VARIABLE_REAL;
              } 
 
-             for (auto & id : identifierList) {
-                symtable.addEntry(id, 0, 0.0, ENTRY_VARIABLE, varType);
+             for (auto & index : identifierList) {
+
+                if (index < 0) {
+                  compilation_status = ERROR_CANT_CREATE_NEW_ENTRY;
+                  compilationErrors.push_back(std::make_pair("memory error occured", lineno));
+                  break;
+                }
+
+                symtable.entries[index];
+                symtable.entries[index].entryType = ENTRY_VARIABLE;
+                symtable.entries[index].variableType = varType;
+                symtable.entries[index].initialized = false; 
              }
 
              identifierList.clear();
@@ -90,12 +99,12 @@ declarations : declarations VAR identifier_list ':' type ';' {
              |
 ;
 
-type : standard_type {$<int>$ = $<int>1;}
+type : standard_type {$$ = $1;}
      | ARRAY '[' NUM DOUBLEDOT NUM ']' OF standard_type
 ;
 
-standard_type : INTEGER {$<int>$ = INTEGER;}
-              | REAL {$<int>$ = REAL;}
+standard_type : INTEGER {$$ = INTEGER;}
+              | REAL {$$ = REAL;}
 ;
 
 subprogram_declarations : subprogram_declarations subprogram_declaration ';'
@@ -131,38 +140,30 @@ statement_list : statement
 ;
 
 statement : variable ASSIGNOP expression {
-          std::string var = std::string($<const char *>1);
-
-          int varSymtableIndex = symtable.findEntryId(var);
+          int varIndex = $1;
              
-          if (varSymtableIndex < 0) {
+          if (varIndex < 0) {
+              compilation_status = ERROR_CANT_CREATE_NEW_ENTRY;
+              compilationErrors.push_back(std::make_pair("memory error occured", lineno));
+          } else if (symtable.entries[varIndex].entryType == ENTRY_NONE) {
               compilation_status = ERROR_UNRECOGNIZED_VARIABLE;
               compilationErrors.push_back(std::make_pair("unrecognized variable", lineno));
           } else {
-              Entry varEntry = symtable.entries[varSymtableIndex];
-              std::string expr = std::string($<const char *>3);
+              int exprIndex = $3;
 
-              if (!((isdigit(expr[0]) || expr[0] == '-'))) {
-                  int symtableIndex = symtable.findEntryId(expr);
-                 
-                  if (symtableIndex < 0) {
-                      compilation_status = ERROR_UNRECOGNIZED_VARIABLE;
-                      compilationErrors.push_back(std::make_pair("unrecognized variable", lineno));
-                  } else {
-                      int result = codeGenVariable(varEntry, expr);
-                       
-                      if (result != 0) {
-                          compilation_status = ERROR_CANT_CREATE_TEMP_VARIABLE;
-                          compilationErrors.push_back(std::make_pair("memory error occured", lineno));
-                      }
-                  }
+              if (exprIndex < 0) {
+                  compilation_status = ERROR_CANT_CREATE_NEW_ENTRY;
+                  compilationErrors.push_back(std::make_pair("memory error occured", lineno));
               } else {
-                  int result = codeGenVariable(varEntry, expr);
-                       
-                   if (result != 0) {
-                      compilation_status = ERROR_CANT_CREATE_TEMP_VARIABLE;
+                  int result = 0;
+                  Entry varEntry = symtable.entries[varIndex];
+                  Entry exprEntry = symtable.entries[exprIndex];
+
+                  result = codeGenVariable(varEntry, exprEntry);
+                  if (exprIndex < 0) {
+                      compilation_status = ERROR_CANT_CREATE_NEW_ENTRY;
                       compilationErrors.push_back(std::make_pair("memory error occured", lineno));
-                   }
+                  }
               }
           }
           }
@@ -174,7 +175,7 @@ statement : variable ASSIGNOP expression {
 
 variable : ID
          {
-         $<const char *>$ = $1;
+         $$ = $1;
          }
          | ID '[' expression ']'
 ;
@@ -182,17 +183,16 @@ variable : ID
 procedure_statement : ID {
                     //std::cout << "Test " + std::string($1);
                     }
-                    | ID                     
-                    { 
-                    procedure_name = std::string($1);
-                    } '(' expression_list ')' 
+                    | ID '(' expression_list ')' 
                     {
-                    if (procedure_name == "read" || procedure_name == "write") {
-                        for (auto & param : parameterList) {
-                            int symtableIndex = symtable.findEntryId(param);
-                             
-                            if (symtableIndex >= 0) {
-                                Entry entry = symtable.entries[symtableIndex];
+                    Entry procedureEntry = symtable.entries[$1];
+                    std::string procedureName = procedureEntry.identifier;
+                     
+                    if (procedureName == "read" || procedureName == "write") {
+                        for (auto & paramIndex : parameterList) {
+                            if (paramIndex >= 0) {
+                            
+                                Entry entry = symtable.entries[paramIndex];
                                  
                                 codeGenProcedure(procedure_name, entry);
                             }
@@ -213,17 +213,17 @@ procedure_statement : ID {
 
 expression_list : expression 
                 {
-                parameterList.push_back($<const char *>1);
+                parameterList.push_back($1);
                 }
                 | expression_list ',' expression
                 {
-                parameterList.push_back($<const char *>3);
+                parameterList.push_back($3);
                 }
 ;
 
 expression : simple_expression
            {
-           $<const char *>$ = $<const char *>1;
+           $$ = $1;
            }
            | simple_expression RELOP simple_expression
            {
@@ -239,7 +239,7 @@ simple_expression : term
 
 term : factor
      {
-     $<const char *>$ = $<const char *>1;
+     $$ = $1;
      }
      | term MULOP factor {
      }
@@ -247,12 +247,12 @@ term : factor
 
 factor : variable
        {
-       $<const char *>$ = $<const char *>1;
+       $$ = $1;
        }
        | ID '(' expression_list ')'
        | NUM
        {
-       $<const char *>$ = $<const char *>1;
+       $$ = $1;
        }
        | '(' expression ')'
        | NOT factor

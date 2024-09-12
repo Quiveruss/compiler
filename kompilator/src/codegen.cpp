@@ -12,8 +12,7 @@
 
 extern std::string result_code;
 
-int codeGenConversion(std::string expr,
-                      std::string exprType);
+int codeGenConversion(Entry exprEntry);
 
 /**
  * Generates code for a procedure.
@@ -45,68 +44,72 @@ void codeGenProcedure(std::string procedure_name,
  * Returns 0 on success, other number otherwise.
  */
 int codeGenVariable(Entry varEntry,
-                     std::string expr) {
-    int tempVariableIndex = 0;
-    std::string strVarType = "0";
-    std::string exprType = "0";
+                    Entry exprEntry) {
+    std::string strVarType = "x";
+    std::string strExprType = "x";
     bool conversion = false;
-    int moveIndex = varEntry.memoryIndex;
-    
-    // Expression is a number and not an ID.
-    if (isdigit(expr[0]) || expr[0] == '-') {
-        // Variable is a real number.
-        if (varEntry.variableType == VARIABLE_REAL) {
-            strVarType = "r";
-        // Variable is an integer.
-        } else {
-            strVarType = "i";
-        }
-
-        // Expression is a real number.
-        if (expr.find('.') != std::string::npos || 
-            expr.find("E") != std::string::npos) {
-            exprType = "r";
-        // Expression is an integer.
-        } else {
-            exprType = "i";
-        }
-
-        // Conversion of numbers.
-        if ((strVarType == "i" && exprType == "r") || 
-            (strVarType == "r" && exprType == "i")) {
-
-            conversion = true;
-            tempVariableIndex = codeGenConversion(expr, exprType); 
-
-            if (tempVariableIndex < 0) {
-                return tempVariableIndex;
-            }
-        }
-
-        result_code.append("        ");
-        result_code.append("mov.");
-        result_code.append(strVarType);
-        result_code.append("    ");
-
-        if (conversion) {
-            result_code.append(std::to_string(symtable.entries[tempVariableIndex].memoryIndex));
-        } else {
-            result_code.append("#" + expr);
-        }
-
-
-        result_code.append("," + std::to_string(moveIndex));
-        result_code.append("    ;mov.");
-        result_code.append(strVarType);
-        result_code.append(" " + expr);
-        result_code.append("," + varEntry.identifier + "\n");
-
-        return 0;
-
-    // Expression is an ID.
+    int tempVarIndex = 0;
+   
+    // Variable check.
+    // Variable is a real number.
+    if (varEntry.variableType == VARIABLE_REAL) {
+        strVarType = "r";
+    // Variable is an integer.
     } else {
-        return 0;
+        strVarType = "i";
     }
+
+    // Expression check.
+    // Expression is a real number.
+    if (exprEntry.variableType == VARIABLE_REAL) {
+        strExprType = "r";
+    // Expression is an integer.
+    } else {
+        strExprType = "i";
+    }
+
+    // Conversion of numbers.
+    if ((strVarType == "i" && strExprType == "r") || 
+        (strVarType == "r" && strExprType == "i")) {
+
+        conversion = true;
+        tempVarIndex = codeGenConversion(exprEntry); 
+
+        if (tempVarIndex < 0) {
+            return tempVarIndex;
+        }
+    }
+
+    result_code.append("        ");
+    result_code.append("mov.");
+    result_code.append(strVarType);
+    result_code.append("    ");
+
+    if (conversion) {
+        result_code.append(std::to_string(symtable.entries[tempVarIndex].memoryIndex));
+    } else if (exprEntry.entryType == ENTRY_VARIABLE) {
+        result_code.append(std::to_string(exprEntry.memoryIndex));
+    } else {
+        result_code.append("#" + exprEntry.identifier);
+    }
+
+    result_code.append("," + std::to_string(varEntry.memoryIndex));
+    result_code.append("    ;mov.");
+    result_code.append(strVarType);
+    result_code.append(" ");
+
+    if (conversion) {
+        result_code.append(symtable.entries[tempVarIndex].identifier);
+    } else if (exprEntry.entryType == ENTRY_VARIABLE) {
+        result_code.append(exprEntry.identifier);
+    } else {
+        result_code.append("#" + exprEntry.identifier);
+    }
+
+    result_code.append("," + varEntry.identifier + "\n");
+
+    return 0;
+
 }
 
 /**
@@ -115,11 +118,10 @@ int codeGenVariable(Entry varEntry,
  * Returns index of the temp variable holding converted value in the symtable.
  * Returns negative value otherwise.
  */
-int codeGenConversion(std::string expr,
-                      std::string exprType) {
+int codeGenConversion(Entry exprEntry) {
     int tempVarIndex;
 
-    if (exprType == "r") {
+    if (exprEntry.variableType == VARIABLE_REAL) {
         tempVarIndex = symtable.createTempVariable(VARIABLE_INTEGER);
     }
     else {
@@ -133,7 +135,7 @@ int codeGenConversion(std::string expr,
 
         result_code.append("        ");
 
-        if (exprType == "r") {
+        if (exprEntry.variableType == VARIABLE_REAL) {
             result_code.append("realtoint.r");
         }
         else {
@@ -141,18 +143,18 @@ int codeGenConversion(std::string expr,
         }
 
         result_code.append("    ");
-        result_code.append("#" + expr);
+        result_code.append("#" + exprEntry.identifier);
         result_code.append("," + std::to_string(tempEntry.memoryIndex));
         result_code.append("    ;");
 
-        if (exprType == "r") {
+        if (exprEntry.variableType == VARIABLE_REAL) {
             result_code.append("realtoint.r");
         }
         else {
             result_code.append("inttoreal.i");
         }
 
-        result_code.append(" " + expr);
+        result_code.append(" " + exprEntry.identifier);
         result_code.append("," + tempEntry.identifier + "\n");
 
         return tempVarIndex;

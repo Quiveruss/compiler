@@ -46,18 +46,23 @@ std::string Entry::toString() {
 
                 break;
             default:
+                varString.append("var_other");
 
                 break;
         }
 
         switch(this->entryType) {
+            case ENTRY_NONE:
+                stringEntry.append(identifier + " ");
+                stringEntry.append("empty_id");
+
+                break;
             case ENTRY_NUMBER:
                 stringEntry.append("number ");
                 stringEntry.append(identifier + " ");
                 stringEntry.append(varString + " ");
 
                 break;
-
             case ENTRY_VARIABLE:
                 stringEntry.append("variable ");
                 stringEntry.append(identifier + " ");
@@ -79,7 +84,8 @@ std::string Entry::toString() {
 
                 break;
             default:
-                stringEntry.append("none");
+                stringEntry.append(identifier + " ");
+                stringEntry.append("entry_other");
         }
 
         return stringEntry;

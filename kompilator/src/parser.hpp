@@ -75,28 +75,7 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-
-union YYSTYPE
-{
-
-  /* ID  */
-  const char * ID;
-  /* NUM  */
-  const char * NUM;
-  /* INTEGER  */
-  int INTEGER;
-  /* REAL  */
-  int REAL;
-  /* MULOP  */
-  int MULOP;
-  /* RELOP  */
-  int RELOP;
-  /* SIGN  */
-  int SIGN;
-#line 97 "parser.hpp" /* yacc.c:1909  */
-};
-
-typedef union YYSTYPE YYSTYPE;
+typedef int YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif

@@ -920,42 +920,42 @@ YY_RULE_SETUP
 case 21:
 YY_RULE_SETUP
 #line 58 "lexer.l"
-{yylval.RELOP = EQUAL; return (RELOP);}
+{yylval = EQUAL; return (RELOP);}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 59 "lexer.l"
-{yylval.RELOP = NOT_EQUAL; return (RELOP);}
+{yylval = NOT_EQUAL; return (RELOP);}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 60 "lexer.l"
-{yylval.RELOP = LESS_THAN; return (RELOP);}
+{yylval = LESS_THAN; return (RELOP);}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 61 "lexer.l"
-{yylval.RELOP = LESS_EQUAL; return (RELOP);}
+{yylval = LESS_EQUAL; return (RELOP);}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 62 "lexer.l"
-{yylval.RELOP = GREATER_THAN; return (RELOP);}
+{yylval = GREATER_THAN; return (RELOP);}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 63 "lexer.l"
-{yylval.RELOP = GREATER_EQUAL; return (RELOP);}
+{yylval = GREATER_EQUAL; return (RELOP);}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
 #line 65 "lexer.l"
-{yylval.SIGN = PLUS; return (SIGN);}
+{yylval = PLUS; return (SIGN);}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
 #line 66 "lexer.l"
-{yylval.SIGN = MINUS; return (SIGN);}
+{yylval = MINUS; return (SIGN);}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
@@ -965,27 +965,27 @@ YY_RULE_SETUP
 case 30:
 YY_RULE_SETUP
 #line 70 "lexer.l"
-{yylval.MULOP = MULTIPLICATION; return (MULOP);}
+{yylval = MULTIPLICATION; return (MULOP);}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 71 "lexer.l"
-{yylval.MULOP = DIVISION; return (MULOP);}
+{yylval = DIVISION; return (MULOP);}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
 #line 72 "lexer.l"
-{yylval.MULOP = DIV; return (MULOP);}
+{yylval = DIV; return (MULOP);}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
 #line 73 "lexer.l"
-{yylval.MULOP = MOD; return (MULOP);}
+{yylval = MOD; return (MULOP);}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
 #line 74 "lexer.l"
-{yylval.MULOP = AND; return (MULOP);}
+{yylval = AND; return (MULOP);}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
@@ -999,43 +999,55 @@ YY_RULE_SETUP
     int result = 0;
     std::string numString = std::string(yytext);
 
-    if (numString.find('.') != std::string::npos || 
-        numString.find("E") != std::string::npos) {
-        float valFloat = std::stof(yytext);
-        std::cout << "real val: " + std::to_string(valFloat) + "\n"; 
+    result = symtable.findEntryId(numString);
 
-        result = symtable.addEntry(numString, 0, valFloat,
-                                   ENTRY_NUMBER, VARIABLE_REAL);
-    } else {
-        int valInt = std::stoi(yytext);
-        std::cout << "int val: " + std::to_string(valInt) + "\n"; 
-        
-        result = symtable.addEntry(numString, valInt, 0.0, 
-                                   ENTRY_NUMBER, VARIABLE_INTEGER);
+    if (result < 0) {
+        if (numString.find('.') != std::string::npos || 
+            numString.find("E") != std::string::npos) {
+            float valFloat = std::stof(yytext);
+
+            result = symtable.addEntry(numString, 0, valFloat,
+                                       ENTRY_NUMBER, VARIABLE_REAL);
+        } else {
+            int valInt = std::stoi(yytext);
+            
+            result = symtable.addEntry(numString, valInt, 0.0, 
+                                       ENTRY_NUMBER, VARIABLE_INTEGER);
+        }
     }
-
-    yylval.NUM = numString.c_str(); return (NUM);
+    
+    yylval = result; 
+    return (NUM);
     }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 98 "lexer.l"
+#line 101 "lexer.l"
 {
+    int result = 0;
     std::string idString = std::string(yytext);
-    yylval.ID = idString.c_str(); return (ID);
-     }
+
+    result = symtable.findEntryId(idString);
+
+    if (result < 0) {
+        result = symtable.addEntry(idString, 0, 0.0, ENTRY_NONE, VARIABLE_NONE);
+    }
+    
+    yylval = result; 
+    return (ID);
+    }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 103 "lexer.l"
+#line 115 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 105 "lexer.l"
+#line 117 "lexer.l"
 ECHO;
 	YY_BREAK
-#line 1039 "lexer.cpp"
+#line 1051 "lexer.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2036,7 +2048,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 105 "lexer.l"
+#line 117 "lexer.l"
 
 
 

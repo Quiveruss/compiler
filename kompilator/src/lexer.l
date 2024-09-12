@@ -55,44 +55,46 @@ do {return (DO);}
 
 ".." {return (DOUBLEDOT);}
 
-"=" {yylval.RELOP = EQUAL; return (RELOP);}
-"<>" {yylval.RELOP = NOT_EQUAL; return (RELOP);}
-"<" {yylval.RELOP = LESS_THAN; return (RELOP);}
-"<=" {yylval.RELOP = LESS_EQUAL; return (RELOP);}
-">" {yylval.RELOP = GREATER_THAN; return (RELOP);}
-">=" {yylval.RELOP = GREATER_EQUAL; return (RELOP);}
+"=" {yylval = EQUAL; return (RELOP);}
+"<>" {yylval = NOT_EQUAL; return (RELOP);}
+"<" {yylval = LESS_THAN; return (RELOP);}
+"<=" {yylval = LESS_EQUAL; return (RELOP);}
+">" {yylval = GREATER_THAN; return (RELOP);}
+">=" {yylval = GREATER_EQUAL; return (RELOP);}
 
-"+" {yylval.SIGN = PLUS; return (SIGN);}
-"-" {yylval.SIGN = MINUS; return (SIGN);}
+"+" {yylval = PLUS; return (SIGN);}
+"-" {yylval = MINUS; return (SIGN);}
 
 "or" {return (OR);}
 
-"*" {yylval.MULOP = MULTIPLICATION; return (MULOP);}
-"/" {yylval.MULOP = DIVISION; return (MULOP);}
-"div" {yylval.MULOP = DIV; return (MULOP);}
-"mod" {yylval.MULOP = MOD; return (MULOP);}
-"and" {yylval.MULOP = AND; return (MULOP);}
+"*" {yylval = MULTIPLICATION; return (MULOP);}
+"/" {yylval = DIVISION; return (MULOP);}
+"div" {yylval = DIV; return (MULOP);}
+"mod" {yylval = MOD; return (MULOP);}
+"and" {yylval = AND; return (MULOP);}
 "not" {return (NOT);}
 
 {number} {
     int result = 0;
     std::string numString = std::string(yytext);
 
-    if (numString.find('.') != std::string::npos || 
-        numString.find("E") != std::string::npos) {
-        float valFloat = std::stof(yytext);
-        std::cout << "real val: " + std::to_string(valFloat) + "\n"; 
+    result = symtable.findEntryId(numString);
 
-        result = symtable.addEntry(numString, 0, valFloat,
-                                   ENTRY_NUMBER, VARIABLE_REAL);
-    } else {
-        int valInt = std::stoi(yytext);
-        std::cout << "int val: " + std::to_string(valInt) + "\n"; 
-        
-        result = symtable.addEntry(numString, valInt, 0.0, 
-                                   ENTRY_NUMBER, VARIABLE_INTEGER);
+    if (result < 0) {
+        if (numString.find('.') != std::string::npos || 
+            numString.find("E") != std::string::npos) {
+            float valFloat = std::stof(yytext);
+
+            result = symtable.addEntry(numString, 0, valFloat,
+                                       ENTRY_NUMBER, VARIABLE_REAL);
+        } else {
+            int valInt = std::stoi(yytext);
+            
+            result = symtable.addEntry(numString, valInt, 0.0, 
+                                       ENTRY_NUMBER, VARIABLE_INTEGER);
+        }
     }
-
+    
     yylval = result; 
     return (NUM);
     }
@@ -100,11 +102,15 @@ do {return (DO);}
     int result = 0;
     std::string idString = std::string(yytext);
 
-    result = symtable.addEntry(idString, 0, 0.0, ENTRY_NONE, VARIABLE_NONE);
+    result = symtable.findEntryId(idString);
 
+    if (result < 0) {
+        result = symtable.addEntry(idString, 0, 0.0, ENTRY_NONE, VARIABLE_NONE);
+    }
+    
     yylval = result; 
     return (ID);
-     }
+    }
 
 . {return *yytext;}
 
