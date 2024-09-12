@@ -1,0 +1,13 @@
+Assembler do kompilatora
+
+jump.i #lab0 ; polecenie skoku pod etykietę lab0
+lab0: ; etykieta lab0
+read.i X ; wczytuje pod adres X wartość typu integer z parametrów programu (określane na podstawie typu przekazanej zmiennej)
+read.r X ; wczytuje pod adres X wartość typu real z parametrów programu (określane na podstawie typu przekazanej zmiennej)
+write.i X ; wyświetla na ekranie wartość zmiennej spod adresu X jako liczba typu integer (określane na podstawie typu przekazanej zmiennej)
+write.r X ; wyświetla na ekranie wartość zmiennej spod adresu X jako liczba typu real (określane na podstawie typu przekazanej zmiennej)
+mov.i #X,Y ; zapisuje pod adresem Y wartość X typu integer
+mov.r #X,Y ; zapisuje pod adresem Y wartość X typu real
+realtoint.r #X,Y ; zapisuje pod adresem Y wartość X typu real jako typ integer
+inttoreal.i #X,Y ; zapisuje pod adresem Y wartość X typu integer jako typ real
+exit ; kończy działanie programu

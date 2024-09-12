@@ -10,9 +10,11 @@
 #include <string>
 
 enum ENTRY_TYPE {
+    ENTRY_NUMBER,
     ENTRY_VARIABLE,
     ENTRY_FUNCTION,
     ENTRY_PROCEDURE,
+    ENTRY_LABEL,
     ENTRY_NONE,
 };
 
@@ -27,18 +29,20 @@ enum VARIABLE_TYPE {
 class Entry {
     public:
     std::string identifier;
-    int symtableIndex;
+    int numIntValue;
+    float numRealValue;
     enum ENTRY_TYPE entryType;
     enum VARIABLE_TYPE variableType;
+    bool initialized;
     int memoryIndex;
 
-   Entry(std::string identifier, 
-          int symtableIndex,
-          enum ENTRY_TYPE entryType, 
-          enum VARIABLE_TYPE variableType,
-          int memoryIndex);
+   Entry(std::string identifier,
+         int numIntValue,
+         float numRealValue,
+         enum ENTRY_TYPE entryType, 
+         enum VARIABLE_TYPE variableType,
+         int memoryIndex);
     std::string toString(void);
-    std::string getIdentifier(void);
 };
 
 #endif /* ENTRY_HPP */

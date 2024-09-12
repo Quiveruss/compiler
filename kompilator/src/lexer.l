@@ -14,8 +14,7 @@
 
     Symtable symtable = Symtable(); 
     
-    int number_integer;
-    float number_real;
+    std::string num_string;
     std::string id_string;
 %}
 
@@ -75,10 +74,36 @@ do {return (DO);}
 "and" {yylval.MULOP = AND; return (MULOP);}
 "not" {return (NOT);}
 
-{number} {yylval.NUM = yytext; return (NUM);}
+{number} {
+    int result = 0;
+    std::string numString = std::string(yytext);
+
+    if (numString.find('.') != std::string::npos || 
+        numString.find("E") != std::string::npos) {
+        float valFloat = std::stof(yytext);
+        std::cout << "real val: " + std::to_string(valFloat) + "\n"; 
+
+        result = symtable.addEntry(numString, 0, valFloat,
+                                   ENTRY_NUMBER, VARIABLE_REAL);
+    } else {
+        int valInt = std::stoi(yytext);
+        std::cout << "int val: " + std::to_string(valInt) + "\n"; 
+        
+        result = symtable.addEntry(numString, valInt, 0.0, 
+                                   ENTRY_NUMBER, VARIABLE_INTEGER);
+    }
+
+    yylval = result; 
+    return (NUM);
+    }
 {id} {
-    id_string = std::string(yytext);
-    yylval.ID = id_string.c_str(); return (ID);
+    int result = 0;
+    std::string idString = std::string(yytext);
+
+    result = symtable.addEntry(idString, 0, 0.0, ENTRY_NONE, VARIABLE_NONE);
+
+    yylval = result; 
+    return (ID);
      }
 
 . {return *yytext;}

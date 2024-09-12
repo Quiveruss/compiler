@@ -54,8 +54,8 @@ void end(void) {
 }
 
 void init (void) {
-    symtable.addEntry("read", ENTRY_PROCEDURE, VARIABLE_NONE);
-    symtable.addEntry("write", ENTRY_PROCEDURE, VARIABLE_NONE);
+    symtable.addEntry("read", 0, 0.0, ENTRY_PROCEDURE, VARIABLE_NONE);
+    symtable.addEntry("write", 0, 0.0, ENTRY_PROCEDURE, VARIABLE_NONE);
 
 
     result_code.append("        jump.i  #lab0   ;jump.i  lab0\n");

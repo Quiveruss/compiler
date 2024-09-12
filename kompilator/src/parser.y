@@ -11,7 +11,6 @@
 #include "global.hpp"
 #include "otherdef.hpp"
 #include "codegen.cpp"
-
 bool parse_error = false;
 
 void yyerror(std::string s);
@@ -26,11 +25,11 @@ std::vector<std::pair<std::string, int>> compilationErrors;
 
 %define api.value.type union
 %token PROGRAM
-%token <const char *> ID
+%token ID
 %token ARRAY
 %token DOUBLEDOT
-%token <int> INTEGER
-%token <int> REAL
+%token INTEGER
+%token REAL
 %token FUNCTION
 %token PROCEDURE
 %token ASSIGNOP
@@ -39,13 +38,13 @@ std::vector<std::pair<std::string, int>> compilationErrors;
 %token ELSE
 %token END
 %token IF
-%token <int> MULOP
+%token MULOP
 %token NOT
-%token <const char *> NUM
+%token NUM
 %token OF
-%token <int> RELOP
+%token RELOP
 %token OR
-%token <int> SIGN
+%token SIGN
 %token THEN
 %token VAR
 %token VARIABLE
@@ -83,7 +82,7 @@ declarations : declarations VAR identifier_list ':' type ';' {
              } 
 
              for (auto & id : identifierList) {
-                symtable.addEntry(id, ENTRY_VARIABLE, varType);
+                symtable.addEntry(id, 0, 0.0, ENTRY_VARIABLE, varType);
              }
 
              identifierList.clear();
@@ -133,7 +132,6 @@ statement_list : statement
 
 statement : variable ASSIGNOP expression {
           std::string var = std::string($<const char *>1);
-          std::cout << "variable: " + var + "\n";
 
           int varSymtableIndex = symtable.findEntryId(var);
              
@@ -143,48 +141,28 @@ statement : variable ASSIGNOP expression {
           } else {
               Entry varEntry = symtable.entries[varSymtableIndex];
               std::string expr = std::string($<const char *>3);
-              // todo:
-              // - var int val int
-              // - var int val real
-              // - var real val real
-              // - var real val int
 
-              if (isdigit(expr[0]) || expr[0] == '-') {
-                if (expr.find('.') != std::string::npos || 
-                    expr.find("E") != std::string::npos) {
-                    float val_float = std::stof(expr); 
-                } else {
-                    int val_int = stoi(expr);
-                    /*
-                     result_code.append("        ");
-                     result_code.append("mov.i");
-                     result_code.append("    ");
-                     result_code.append("#" + std::to_string());
-                     result_code.append("    ;read.");
-                     result_code.append(strVarType);
-                     result_code.append(" " + entry.identifier + "\n");
-                     */
-
-                    if (varEntry.variableType == VARIABLE_INTEGER) {
-                        //result_code.append();
-                    } else {
-                    }
-
-                }
-              } else {
-              // - var int id int
-              // - var int id real
-              // - var real id real
-              // - var real id int
-                std::cout << "id\n";  
-                int symtableIndex = symtable.findEntryId(expr);
+              if (!((isdigit(expr[0]) || expr[0] == '-'))) {
+                  int symtableIndex = symtable.findEntryId(expr);
                  
-                if (symtableIndex < 0) {
-                    compilation_status = ERROR_UNRECOGNIZED_VARIABLE;
-                    compilationErrors.push_back(std::make_pair("unrecognized variable", lineno));
-                } else {
-                    
-                }
+                  if (symtableIndex < 0) {
+                      compilation_status = ERROR_UNRECOGNIZED_VARIABLE;
+                      compilationErrors.push_back(std::make_pair("unrecognized variable", lineno));
+                  } else {
+                      int result = codeGenVariable(varEntry, expr);
+                       
+                      if (result != 0) {
+                          compilation_status = ERROR_CANT_CREATE_TEMP_VARIABLE;
+                          compilationErrors.push_back(std::make_pair("memory error occured", lineno));
+                      }
+                  }
+              } else {
+                  int result = codeGenVariable(varEntry, expr);
+                       
+                   if (result != 0) {
+                      compilation_status = ERROR_CANT_CREATE_TEMP_VARIABLE;
+                      compilationErrors.push_back(std::make_pair("memory error occured", lineno));
+                   }
               }
           }
           }

@@ -10,77 +10,79 @@
 #include "entry.hpp"
 
 Entry::Entry(std::string identifier, 
-          int symtableIndex,
-          enum ENTRY_TYPE entryType, 
-          enum VARIABLE_TYPE variableType,
-          int memoryIndex):
+             int numIntValue,
+             float numRealValue,
+             enum ENTRY_TYPE entryType, 
+             enum VARIABLE_TYPE variableType,
+             int memoryIndex):
         identifier(identifier),
-        symtableIndex(symtableIndex),
+        numIntValue(numIntValue),
+        numRealValue(numRealValue),
         entryType(entryType),
         variableType(variableType),
+        initialized(false),
         memoryIndex(memoryIndex)
     {}
 
 std::string Entry::toString() {
-        std::string stringEntry = "; ";
-        stringEntry.append(std::to_string(this->symtableIndex));
-        stringEntry.append(" ");
+        std::string stringEntry = "";
+        std::string varString = "";
         
+        switch (variableType) {
+            case VARIABLE_INTEGER:
+                varString.append("integer");
+
+                break;
+            case VARIABLE_REAL:
+                varString.append("real");
+
+                break;
+            case VARIABLE_ARRAY_INTEGER:
+                varString.append("array integer");
+
+                break;
+            case VARIABLE_ARRAY_REAL:
+                varString.append("array real");
+
+                break;
+            default:
+
+                break;
+        }
+
         switch(this->entryType) {
+            case ENTRY_NUMBER:
+                stringEntry.append("number ");
+                stringEntry.append(identifier + " ");
+                stringEntry.append(varString + " ");
+
+                break;
+
             case ENTRY_VARIABLE:
                 stringEntry.append("variable ");
                 stringEntry.append(identifier + " ");
+                stringEntry.append(varString + " ");
 
-                switch (variableType) {
-                    case VARIABLE_INTEGER:
-                        stringEntry.append("integer ");
-
-                        break;
-                    case VARIABLE_REAL:
-                        stringEntry.append("real ");
-
-                        break;
-                    case VARIABLE_ARRAY_INTEGER:
-                        stringEntry.append("array integer ");
-
-                        break;
-                    case VARIABLE_ARRAY_REAL:
-                        stringEntry.append("array real ");
-
-                        break;
-                    default:
-                        stringEntry.append("none ");
-
-                        break;
-                }
-
-                stringEntry.append("offset=" + std::to_string(this->memoryIndex));
+                stringEntry.append("offset=" + std::to_string(this->memoryIndex) + " ");
 
                 break;
             case ENTRY_FUNCTION:
-                stringEntry.append("function");
+                stringEntry.append("function ");
+                stringEntry.append(identifier);
 
 
                 break;
             case ENTRY_PROCEDURE:
-                stringEntry.append("procedure");
+                stringEntry.append("procedure ");
+                stringEntry.append(identifier);
 
 
                 break;
             default:
                 stringEntry.append("none");
         }
-        stringEntry.append(" ");
-
-        stringEntry.append(this->identifier);
-        stringEntry.append(" ");
 
         return stringEntry;
 }
-
-std::string Entry::getIdentifier() {
-    return identifier;
-}
-
 
 #endif /* ENTRY_CPP */
