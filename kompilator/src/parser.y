@@ -85,7 +85,6 @@ declarations : declarations VAR identifier_list ':' type ';' {
                 if (index < 0) {
                   compilation_status = ERROR_CANT_CREATE_NEW_ENTRY;
                   compilationErrors.push_back(std::make_pair("memory error occured", lineno));
-                  break;
                 }
 
                 symtable.initVariable(index, varType);
