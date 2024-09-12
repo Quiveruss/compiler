@@ -72,6 +72,9 @@ int Symtable::addEntry(std::string id,
     return entries.size()-1;
 }
     
+/**
+ * Finds entry by ID.
+ */
 int Symtable::findEntryId(std::string str) {
     int i = 0;
 
@@ -85,6 +88,30 @@ int Symtable::findEntryId(std::string str) {
     return -1;
 }
 
+/**
+ * Initializes variable based on ID.
+ */
+int Symtable::initVariable(int symtableIndex, enum VARIABLE_TYPE varType) {
+    if (symtableIndex < 0) {
+        return -1;
+    }
+
+    entries[symtableIndex].entryType = ENTRY_VARIABLE;
+    entries[symtableIndex].variableType = varType;
+    entries[symtableIndex].memoryIndex = currentMemoryIndex;
+
+    if (varType == VARIABLE_INTEGER) {
+        currentMemoryIndex += 4;
+    } else if (varType == VARIABLE_REAL) {
+        currentMemoryIndex += 8;
+    }
+
+    return 0;
+}
+
+/**
+ * Creates temporary variable.
+ */
 int Symtable::createTempVariable(VARIABLE_TYPE varType) {
     std::string tempVarID = "$t" + std::to_string(tempVarCounter);
     int result = 0;

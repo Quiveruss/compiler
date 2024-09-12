@@ -88,10 +88,7 @@ declarations : declarations VAR identifier_list ':' type ';' {
                   break;
                 }
 
-                symtable.entries[index];
-                symtable.entries[index].entryType = ENTRY_VARIABLE;
-                symtable.entries[index].variableType = varType;
-                symtable.entries[index].initialized = false; 
+                symtable.initVariable(index, varType);
              }
 
              identifierList.clear();
@@ -194,7 +191,7 @@ procedure_statement : ID {
                             
                                 Entry entry = symtable.entries[paramIndex];
                                  
-                                codeGenProcedure(procedure_name, entry);
+                                codeGenProcedure(procedureName, entry);
                             }
                             else {
                                 compilation_status = ERROR_UNRECOGNIZED_VARIABLE;

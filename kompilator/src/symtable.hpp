@@ -46,6 +46,13 @@ class Symtable {
     int findEntryId(std::string str);
 
     /**
+     * Initializes variable based on given index in the symbolic table.
+     * 
+     * Retunrs 0 on success and -1 on failure.
+     */
+    int initVariable(int symtableIndex, enum VARIABLE_TYPE varType);
+
+    /**
      * Generates new temporary variable with specified type.
      *
      * Returns:

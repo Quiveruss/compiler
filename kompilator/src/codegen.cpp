@@ -17,7 +17,7 @@ int codeGenConversion(Entry exprEntry);
 /**
  * Generates code for a procedure.
  */
-void codeGenProcedure(std::string procedure_name,
+void codeGenProcedure(std::string procedureName,
                       Entry entry
                       ) {
     std::string strVarType;
@@ -29,11 +29,13 @@ void codeGenProcedure(std::string procedure_name,
     }
 
     result_code.append("        ");
-    result_code.append(procedure_name);
+    result_code.append(procedureName);
     result_code.append(".");
     result_code.append(strVarType);
     result_code.append("    " + std::to_string(entry.memoryIndex));
-    result_code.append("    ;read.");
+    result_code.append("    ;");
+    result_code.append(procedureName);
+    result_code.append(".");
     result_code.append(strVarType);
     result_code.append(" " + entry.identifier + "\n");
 }

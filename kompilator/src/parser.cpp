@@ -458,13 +458,13 @@ static const yytype_uint8 yytranslate[] =
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_uint16 yyrline[] =
+static const yytype_uint8 yyrline[] =
 {
-       0,    53,    53,    53,    70,    71,    74,    99,   102,   103,
-     106,   107,   110,   111,   114,   117,   118,   121,   122,   125,
-     126,   129,   134,   135,   138,   139,   142,   170,   171,   172,
-     173,   176,   180,   183,   186,   214,   218,   224,   228,   234,
-     235,   236,   237,   240,   244,   248,   252,   253,   257,   258
+       0,    53,    53,    53,    70,    71,    74,    96,    99,   100,
+     103,   104,   107,   108,   111,   114,   115,   118,   119,   122,
+     123,   126,   131,   132,   135,   136,   139,   167,   168,   169,
+     170,   173,   177,   180,   183,   211,   215,   221,   225,   231,
+     232,   233,   234,   237,   241,   245,   249,   250,   254,   255
 };
 #endif
 
@@ -1354,37 +1354,34 @@ yyreduce:
                   break;
                 }
 
-                symtable.entries[index];
-                symtable.entries[index].entryType = ENTRY_VARIABLE;
-                symtable.entries[index].variableType = varType;
-                symtable.entries[index].initialized = false; 
+                symtable.initVariable(index, varType);
              }
 
              identifierList.clear();
              }
-#line 1366 "parser.cpp" /* yacc.c:1646  */
+#line 1363 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 102 "parser.y" /* yacc.c:1646  */
+#line 99 "parser.y" /* yacc.c:1646  */
     {(yyval) = (yyvsp[0]);}
-#line 1372 "parser.cpp" /* yacc.c:1646  */
+#line 1369 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 106 "parser.y" /* yacc.c:1646  */
+#line 103 "parser.y" /* yacc.c:1646  */
     {(yyval) = INTEGER;}
-#line 1378 "parser.cpp" /* yacc.c:1646  */
+#line 1375 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 107 "parser.y" /* yacc.c:1646  */
+#line 104 "parser.y" /* yacc.c:1646  */
     {(yyval) = REAL;}
-#line 1384 "parser.cpp" /* yacc.c:1646  */
+#line 1381 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 142 "parser.y" /* yacc.c:1646  */
+#line 139 "parser.y" /* yacc.c:1646  */
     {
           int varIndex = (yyvsp[-2]);
              
@@ -1413,27 +1410,27 @@ yyreduce:
               }
           }
           }
-#line 1417 "parser.cpp" /* yacc.c:1646  */
+#line 1414 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 177 "parser.y" /* yacc.c:1646  */
+#line 174 "parser.y" /* yacc.c:1646  */
     {
          (yyval) = (yyvsp[0]);
          }
-#line 1425 "parser.cpp" /* yacc.c:1646  */
+#line 1422 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 183 "parser.y" /* yacc.c:1646  */
+#line 180 "parser.y" /* yacc.c:1646  */
     {
                     //std::cout << "Test " + std::string($1);
                     }
-#line 1433 "parser.cpp" /* yacc.c:1646  */
+#line 1430 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 187 "parser.y" /* yacc.c:1646  */
+#line 184 "parser.y" /* yacc.c:1646  */
     {
                     Entry procedureEntry = symtable.entries[(yyvsp[-3])];
                     std::string procedureName = procedureEntry.identifier;
@@ -1444,7 +1441,7 @@ yyreduce:
                             
                                 Entry entry = symtable.entries[paramIndex];
                                  
-                                codeGenProcedure(procedure_name, entry);
+                                codeGenProcedure(procedureName, entry);
                             }
                             else {
                                 compilation_status = ERROR_UNRECOGNIZED_VARIABLE;
@@ -1458,74 +1455,74 @@ yyreduce:
 
                     parameterList.clear();
                     }
-#line 1462 "parser.cpp" /* yacc.c:1646  */
+#line 1459 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 215 "parser.y" /* yacc.c:1646  */
+#line 212 "parser.y" /* yacc.c:1646  */
     {
                 parameterList.push_back((yyvsp[0]));
                 }
-#line 1470 "parser.cpp" /* yacc.c:1646  */
+#line 1467 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 219 "parser.y" /* yacc.c:1646  */
+#line 216 "parser.y" /* yacc.c:1646  */
     {
                 parameterList.push_back((yyvsp[0]));
                 }
-#line 1478 "parser.cpp" /* yacc.c:1646  */
+#line 1475 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 225 "parser.y" /* yacc.c:1646  */
+#line 222 "parser.y" /* yacc.c:1646  */
     {
            (yyval) = (yyvsp[0]);
            }
-#line 1486 "parser.cpp" /* yacc.c:1646  */
+#line 1483 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 229 "parser.y" /* yacc.c:1646  */
+#line 226 "parser.y" /* yacc.c:1646  */
     {
            // nothing for now
            }
-#line 1494 "parser.cpp" /* yacc.c:1646  */
+#line 1491 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 241 "parser.y" /* yacc.c:1646  */
+#line 238 "parser.y" /* yacc.c:1646  */
     {
      (yyval) = (yyvsp[0]);
      }
-#line 1502 "parser.cpp" /* yacc.c:1646  */
+#line 1499 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 244 "parser.y" /* yacc.c:1646  */
+#line 241 "parser.y" /* yacc.c:1646  */
     {
      }
-#line 1509 "parser.cpp" /* yacc.c:1646  */
+#line 1506 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 249 "parser.y" /* yacc.c:1646  */
+#line 246 "parser.y" /* yacc.c:1646  */
     {
        (yyval) = (yyvsp[0]);
        }
-#line 1517 "parser.cpp" /* yacc.c:1646  */
+#line 1514 "parser.cpp" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 254 "parser.y" /* yacc.c:1646  */
+#line 251 "parser.y" /* yacc.c:1646  */
     {
        (yyval) = (yyvsp[0]);
        }
-#line 1525 "parser.cpp" /* yacc.c:1646  */
+#line 1522 "parser.cpp" /* yacc.c:1646  */
     break;
 
 
-#line 1529 "parser.cpp" /* yacc.c:1646  */
+#line 1526 "parser.cpp" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1753,7 +1750,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 261 "parser.y" /* yacc.c:1906  */
+#line 258 "parser.y" /* yacc.c:1906  */
 
 
 void yyerror(std::string s) {
